@@ -41,14 +41,16 @@ class MCastNet:
 
             elif msg[0] == "2":
                 msg = msg[1:]
-                self.nicktable.pop(src)
-                self.ui.userlist.remove(msg)
-                self.ui.redraw_userlist()
-                self.ui.chatbuffer_add(f" {msg} left.")
+                try:
+                    self.ui.userlist.remove(msg)
+                    self.ui.redraw_userlist()
+                    self.nicktable.pop(src)
+                    self.ui.chatbuffer_add(f" {msg} left.")
+                except ValueError: pass
             
             elif msg[0] == "0":
                 msg = msg[1:]
-                if src in self.nicktable: 
+                if src in self.nicktable:
                     nick = self.nicktable[src]
                 else: nick = src
                 self.ui.chatbuffer_add(f" {nick}: {msg}")
