@@ -25,21 +25,31 @@ class MCastNet:
     def send(self, msg: str):
         self.sock.sendto(f"0{msg}".encode(), ("224.0.0.111", self.port))
 
+    def identify(self):
+        self.sock.sendto(f"3".encode(), ("224.0.0.111", self.port))
+
     #@multitasking.task
     def recv(self):
         while True:
             data = self.sock.recvfrom(4096)
             msg, src = (data[0], data[1][0])
             msg = msg.decode()
+            
+            if msg[0] == "0": # Normal message
+                msg = msg[1:]
+                if src in self.nicktable:
+                    nick = self.nicktable[src]
+                else: nick = src
+                self.ui.chatbuffer_add(f" {nick}: {msg}")
 
-            if msg[0] == "1":
+            elif msg[0] == "1": # Join message
                 msg = msg[1:]
                 self.nicktable[src] = msg
                 self.ui.userlist.append(msg)
                 self.ui.redraw_userlist()
                 self.ui.chatbuffer_add(f" {msg} joined.")
 
-            elif msg[0] == "2":
+            elif msg[0] == "2": # Leave message
                 msg = msg[1:]
                 try:
                     self.ui.userlist.remove(msg)
@@ -47,13 +57,15 @@ class MCastNet:
                     self.nicktable.pop(src)
                     self.ui.chatbuffer_add(f" {msg} left.")
                 except ValueError: pass
-            
-            elif msg[0] == "0":
+
+            elif msg[0] == "3": # Request for identification
+                self.sock.sendto(f"4{self.nick}".encode(), ("224.0.0.111", self.port))
+
+            elif msg[0] == "4": # Response to 3
                 msg = msg[1:]
-                if src in self.nicktable:
-                    nick = self.nicktable[src]
-                else: nick = src
-                self.ui.chatbuffer_add(f" {nick}: {msg}")
+                self.nicktable[src] = msg
+                self.ui.userlist.append(msg)
+                self.ui.redraw_userlist()
 
             self.ui.redraw_ui()
     
