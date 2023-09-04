@@ -6,13 +6,18 @@ import threading
 def main(stdscr):
     stdscr.clear()
     ui = ChatUI(stdscr)
-    nick = ui.wait_input("Username: ")
-    net = MCastNet(nick=nick, ui=ui)
+
+    nick = ""
+    while nick == "":
+        nick = ui.wait_input("Username: ")
+
+    net = MCastNet(nick, ui)
 
     ui.chatbuffer_add(" Welcome to LAN chat. Type /help for help.")
     
     x = threading.Thread(target=net.recv, daemon=True)
     x.start()
+    net.identify()
 
     inp = ""
     while inp != "/quit":
