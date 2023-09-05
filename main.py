@@ -32,6 +32,9 @@ def main(stdscr):
         elif inp == "/identify":
             net.identify()
 
+        elif inp.startswith("/rename "):
+            net.rename(inp[8:]) # Zahodí prvních 8 znaků
+
         elif inp == "/quit":
             net.__del__()
             break

@@ -28,6 +28,10 @@ class MCastNet:
     def identify(self):
         self.sock.sendto(f"3".encode(), ("224.0.0.111", self.port))
 
+    def rename(self, newnick: str):
+        self.nick = newnick
+        self.sock.sendto(f"5{newnick}".encode(), ("224.0.0.111", self.port))
+
     #@multitasking.task
     def recv(self):
         while True:
@@ -71,6 +75,19 @@ class MCastNet:
                 self.nicktable[src] = msg
                 self.ui.userlist.append(msg)
                 self.ui.redraw_userlist()
+
+            elif msg[0] == "5": # Nick change
+                msg = msg[1:]
+
+                if src in self.nicktable:
+                    oldnick = self.nicktable[src]
+                    self.ui.userlist = list(map(lambda x: x.replace(oldnick, msg), self.ui.userlist)) #Replace all occurences of oldnick by msg
+                else:
+                    oldnick = src
+                    self.ui.userlist.append(msg)
+
+                self.ui.redraw_userlist()
+                self.ui.chatbuffer_add(f" {oldnick} is now known as {msg}.")                                
 
             self.ui.redraw_ui()
     
