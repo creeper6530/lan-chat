@@ -86,6 +86,7 @@ class MCastNet:
                     oldnick = src
                     self.ui.userlist.append(msg)
 
+                self.nicktable[src] = msg
                 self.ui.redraw_userlist()
                 self.ui.chatbuffer_add(f" {oldnick} is now known as {msg}.")                                
 
