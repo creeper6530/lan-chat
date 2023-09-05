@@ -64,6 +64,10 @@ class MCastNet:
 
             elif msg[0] == "4": # Response to 3
                 msg = msg[1:]
+
+                if msg in self.ui.userlist:
+                    continue
+
                 self.nicktable[src] = msg
                 self.ui.userlist.append(msg)
                 self.ui.redraw_userlist()
