@@ -17,6 +17,7 @@ def main(stdscr):
     
     x = threading.Thread(target=net.recv, daemon=True)
     x.start()
+    net.identify()
 
     inp = ""
     while True:
