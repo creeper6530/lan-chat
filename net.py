@@ -45,11 +45,10 @@ class MCastNet:
             elif msg[0] == "1": # Join message
                 msg = msg[1:]
 
-                if msg != self.nick:
-                    self.nicktable[src] = msg
-                    self.ui.userlist.append(msg)
-                    self.ui.redraw_userlist()
-                    self.ui.chatbuffer_add(f" {msg} joined.")
+                self.nicktable[src] = msg
+                self.ui.userlist.append(msg)
+                self.ui.redraw_userlist()
+                self.ui.chatbuffer_add(f" {msg} joined.")
 
             elif msg[0] == "2": # Leave message
                 msg = msg[1:]

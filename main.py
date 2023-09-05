@@ -17,10 +17,9 @@ def main(stdscr):
     
     x = threading.Thread(target=net.recv, daemon=True)
     x.start()
-    net.identify()
 
     inp = ""
-    while inp != "/quit":
+    while True:
         inp = ui.wait_input("Enter message: ")
 
         if inp == "/help":
@@ -31,6 +30,10 @@ def main(stdscr):
             
         elif inp == "/identify":
             net.identify()
+
+        elif inp == "/quit":
+            net.__del__()
+            break
 
         else: net.send(inp)
 
